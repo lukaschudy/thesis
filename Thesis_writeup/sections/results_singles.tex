@@ -5,7 +5,7 @@ Each single friction sweep uses 250 sessions per cell. All sessions converged wi
 
 \begin{table}[H]
 \centering
-\caption{Single friction sweeps. SD is cross-session standard deviation. The $L=0$, $\sigma=0$, and $T=0$ cells all reproduce the baseline ($\Delta=0.843$) bit-for-bit, which is the internal sanity check.}
+\caption{Single friction sweeps. SD is cross-session standard deviation. The $L=0$, $\sigma=0$, and $T=0$ cells all reproduce the baseline ($\Delta=0.843$) bit-for-bit.}
 \label{tab:singles}
 \begin{tabular}{rcc@{\hspace{0.75em}}|@{\hspace{0.75em}}rcc@{\hspace{0.75em}}|@{\hspace{0.75em}}rcc}
 \toprule
@@ -40,7 +40,7 @@ This is consistent with the broader imperfect-monitoring literature in the sense
 \subsection{Noise: smooth decline to Nash}
 \label{sec:results-noise}
 
-$\Delta$ falls continuously from $0.843$ at $\sigma=0$ to indistinguishable from Nash by $\sigma=5$ (Figure~\ref{fig:noise}). Unlike latency there is no cliff and no residual floor. The mechanism is different. Noise corrupts the rival side state value rather than its arrival time. At high $\sigma$ the perceived state is close to independent of the rival's actual price, so any policy that conditions on that state encodes no rival relevant information. Both reactive and focal point coordination require the perceived state to contain rival-side information, and noise destroys both.
+When introducing noise, $\Delta$ falls continuously from $0.843$ at $\sigma=0$ to indistinguishable from Nash by $\sigma=5$ (Figure~\ref{fig:noise}). Unlike latency there is no cliff and no residual floor. The mechanism is different. Noise corrupts the rival side state value rather than its arrival time. At high $\sigma$ the perceived state is close to independent of the rival's actual price, so any policy that conditions on that state encodes no rival relevant information. Both reactive and focal point coordination require the perceived state to contain rival-side information, and noise destroys both.
 
 To translate $\sigma$ into something concrete, the price grid has 15 slots spanning roughly the Nash to monopoly range, so one grid step corresponds to a few cents of price change in this parameterisation. $\sigma=1$ then means each agent's observation of the rival is off by about one slot (a few cents) per period, the kind of error you would get from a slightly out of date price feed or a scrape that misses the most recent change. $\sigma=2$ corresponds to two step errors, noticeable but not catastrophic. By $\sigma=5$ the noise standard deviation is comparable to half the grid range, the agent essentially cannot read the rival's price, and collusion collapses entirely.
 
