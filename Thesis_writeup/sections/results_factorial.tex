@@ -29,7 +29,7 @@ The four single-friction cells (\texttt{F000}, \texttt{F100}, \texttt{F010}, \te
 \subsection{Benchmark predictions}
 \label{sec:factorial-benchmarks}
 
-When two or three frictions are imposed together, there is no theoretical benchmark that uniquely determines the joint $\Delta$. I therefore compare the observed multi-friction cells with four reference predictions. These are not structural models; they are diagnostic benchmarks for whether the joint outcome looks additive, multiplicative, saturated by the strongest single friction, or dominated by the least disruptive friction.\footnote{Notation: $\Delta_0$ is the no-friction baseline, $\Delta_i$ is the single-friction value for friction $i$, and $\mathcal{F}$ is the set of frictions switched on in the cell being predicted. For example, $\mathcal{F}=\{L,\sigma\}$ for \texttt{F110} and $\mathcal{F}=\{L,\sigma,T\}$ for \texttt{F111}.} For each multi-friction cell:
+When two or three frictions are imposed together, there is no theoretical benchmark that uniquely determines the joint $\Delta$. I therefore compare the observed multi-friction cells with four reference predictions. These are diagnostic benchmarks for whether the joint outcome looks additive, multiplicative, saturated by the strongest single friction, or dominated by the least disruptive friction.\footnote{Notation: $\Delta_0$ is the no-friction baseline, $\Delta_i$ is the single-friction value for friction $i$, and $\mathcal{F}$ is the set of frictions switched on in the cell being predicted. For example, $\mathcal{F}=\{L,\sigma\}$ for \texttt{F110} and $\mathcal{F}=\{L,\sigma,T\}$ for \texttt{F111}.} For each multi-friction cell:
 \begin{description}[leftmargin=2.4em, style=nextline]
     \item[Additive] $\widehat\Delta_{\mathrm{add}} = \max\{0,\, \Delta_0 - \sum_{i\in\mathcal{F}}(\Delta_0 - \Delta_i)\}$. The friction effects add, where each friction subtracts its own reduction from baseline. Floored at zero because $\Delta$ cannot go much below the competitive level.
     \item[Multiplicative] $\widehat\Delta_{\mathrm{mult}} = \Delta_0 \prod_{i\in\mathcal{F}}(\Delta_i/\Delta_0)$. The friction effects compound, where each friction preserves a fraction of baseline and the joint effect is the product of those fractions.
@@ -37,6 +37,7 @@ When two or three frictions are imposed together, there is no theoretical benchm
     \item[Maximum] $\widehat\Delta_{\mathrm{max}} = \max_{i\in\mathcal{F}}\Delta_i$. The weakest friction wins and the joint outcome is no worse than the least destructive single friction. This is what you would expect if frictions perfectly substitute for each other.
 \end{description}
 
+\newpage
 \paragraph{A worked example.}
 Consider \texttt{F110} (latency and noise on, async off). The single-friction reference values are $\Delta_L = 0.210$ (latency only) and $\Delta_\sigma = 0.500$ (noise only), with baseline $\Delta_0 = 0.848$. The four predictions are
 \begin{itemize}[topsep=2pt, itemsep=2pt]
@@ -74,14 +75,14 @@ Cell & $(L,\sigma,T)$ & $\Delta$ (obs.) & SD & $\widehat\Delta_{\mathrm{add}}$ &
 
 Figure~\ref{fig:factorial-forest} visualises the same comparison as Table~\ref{tab:factorial}. The distance between the black observed points and the benchmark markers is the main evidence for the interaction patterns discussed below.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{figures/fig_factorial_forest.pdf}
+\includegraphics[width=0.9\linewidth]{figures/fig_factorial_forest.pdf}
 \caption{Combined-friction cells at $N=1000$. Black shows the observed $\Delta$ with cross-session SD bars. Coloured markers show the additive (red), multiplicative (blue), and minimum (green) benchmark predictions for each multi-friction cell.}
 \label{fig:factorial-forest}
 \end{figure}
 
-Two interaction patterns emerge.
+\noindent Two interaction patterns emerge.
 
 Latency $+$ noise compound, even more strongly than independent dampening would predict. $\Delta_{\texttt{F110}} = 0.059$ falls below three of the four predictions. It is below the multiplicative ($0.124$), well below the minimum ($0.210$), and far below the maximum ($0.500$). The additive prediction reads as $0$ in the table, but only because of the non-negativity floor (the raw additive value is $-0.14$), so flooring is the only thing keeping it from being even further below the observed $0.059$. The substantive comparison is therefore against the multiplicative model, and against that benchmark the observed value is below by a factor of two. When two information degradation frictions are imposed jointly, the joint effect is stronger than the product of their individual effects. We call this super-multiplicative compounding, since it is literally more than the multiplicative model predicts and the two frictions amplify each other rather than just stacking independently. The mechanism is that latency and noise act on different dimensions of the rival side observation. Latency acts on its time of arrival, noise on its value. Either alone leaves some learning signal intact (latency leaves the value correct just stale, noise leaves the timing correct just inaccurate). Combined, neither dimension is reliable, and the residual focal point coordination that survives pure latency is destroyed by the noise component.
 
@@ -97,51 +98,18 @@ Reading these patterns through the four benchmarks, \texttt{F101} sits between $
 \subsection{Effect decomposition of the interactions}
 \label{sec:factorial-regression}
 
-The purpose of the decomposition is to express the eight $N=1000$ cell means in Table~\ref{tab:factorial} as a baseline, three main effects, and four interaction effects. Because there are 8 cells and 8 terms, the design is saturated: the coefficients are an exact re-expression of the cell means, not a prediction model fitted with residual error. The benefit is interpretive. Main effects reproduce the single-friction reductions, while interaction effects measure how far the multi-friction cells depart from a purely additive combination of those reductions.
+As a compact check on the cell-mean interpretation, I also decompose the eight $N=1000$ cell means into main effects and interaction effects. The full equation, coefficient table, and standard-error calculation are reported in Appendix~\ref{app:effect-decomposition}. The decomposition is saturated, so it is not a predictive regression with residual error; it is an exact re-expression of the eight cell means. Its purpose is to show whether the interaction patterns above survive a formal additive accounting.
 
-The decomposition is
-\begin{equation*}
-\bar{\Delta}_c \;=\; \beta_0 + \beta_L L_c + \beta_\sigma \sigma_c + \beta_T T_c + \beta_{L\sigma}(L_c\sigma_c) + \beta_{LT}(L_cT_c) + \beta_{\sigma T}(\sigma_cT_c) + \beta_{L\sigma T}(L_c\sigma_cT_c),
-\end{equation*}
-where $c$ indexes the eight cells and $L_c,\sigma_c,T_c\in\{0,1\}$ indicate whether each friction is active. There is no $\varepsilon$ term because the equation can be solved exactly as $\hat\beta = X^{-1}\bar{\boldsymbol\Delta}$. Standard errors are still meaningful because each cell mean has sampling uncertainty from 1000 independent sessions. I compute each cell's $\mathrm{SEM}_c^2 = \mathrm{SD}_c^2 / N$ and propagate that uncertainty through the linear transformation using $\widehat{\mathrm{Var}}(\hat\beta) = X^{-1}\,\mathrm{diag}(\mathrm{SEM}_c^2)\,X^{-\top}$.\footnote{Implemented in \texttt{numpy} and \texttt{scipy.stats}. The resulting standard errors reflect uncertainty in the estimated cell means, not residual variation from an unsaturated regression.} Results are reported in Table~\ref{tab:factorial-regression}.
+They do. The largest interaction is latency $\times$ asynchrony, with $\beta_{LT}=+0.601$, meaning that adding asynchrony to latency raises $\Delta$ by $0.601$ relative to a purely additive calculation. The noise $\times$ asynchrony term is also positive, $\beta_{\sigma T}=+0.245$, and the three-way term is positive as well, $\beta_{L\sigma T}=+0.097$. These coefficients match the async-rescue interpretation: timing structure partly substitutes for degraded rival-side information.
 
-\begin{table}[H]
-\centering
-\caption{Saturated $2\times 2\times 2$ effect decomposition at $N=1000$ sessions per cell. Standard errors are derived analytically from cross-session SDs. Significance: $^{***}\,p<0.001$.}
-\label{tab:factorial-regression}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabular}{lcccc}
-\toprule
-Term & Estimate & SE & $z$ & $p$ \\
-\midrule
-Intercept                & $+0.848$\textsuperscript{***} & $0.003$ & $+246.0$ & $<\!0.001$ \\
-$L$                      & $-0.638$\textsuperscript{***} & $0.005$ & $-123.3$ & $<\!0.001$ \\
-$\sigma$                 & $-0.348$\textsuperscript{***} & $0.010$ & $-34.7$  & $<\!0.001$ \\
-$T$                      & $-0.465$\textsuperscript{***} & $0.005$ & $-94.5$  & $<\!0.001$ \\
-$L\cdot\sigma$           & $+0.197$\textsuperscript{***} & $0.011$ & $+17.8$  & $<\!0.001$ \\
-$L\cdot T$               & $+0.601$\textsuperscript{***} & $0.008$ & $+72.2$  & $<\!0.001$ \\
-$\sigma\cdot T$          & $+0.245$\textsuperscript{***} & $0.011$ & $+22.0$  & $<\!0.001$ \\
-$L\cdot\sigma\cdot T$    & $+0.097$\textsuperscript{***} & $0.014$ & $+7.0$   & $<\!0.001$ \\
-\midrule
-\multicolumn{5}{l}{Joint Wald test, all four interaction terms equal zero, $\chi^2(4) = 21\,023$, $p<10^{-15}$.} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The intercept recovers $\Delta_0 = 0.848$ and the three main effects reproduce the single-friction reductions ($-0.638$ for latency, $-0.348$ for noise, $-0.465$ for async). These are mechanical restatements of the cell means.
-
-The interactions carry the substantive content. The latency-times-async coefficient $\beta_{LT} = +0.601$ is by far the largest. It says that when asynchrony is added to latency, $\Delta$ is $0.601$ higher than a purely additive calculation would imply. The noise-times-async coefficient $\beta_{\sigma T} = +0.245$ gives the analogous result for noise plus asynchrony, smaller in magnitude because noise is a less destructive single-friction treatment than latency. The three-way coefficient $\beta_{L\sigma T} = +0.097$ indicates that, with all three frictions active, the positive asynchrony interaction is mildly stronger than the two-way terms alone would imply.
-
-The latency-times-noise coefficient $\beta_{L\sigma} = +0.197$ might look at first like it contradicts the super-multiplicative finding for \texttt{F110}, but it does not. The additive prediction for \texttt{F110} without the zero floor is $-0.138$, the observed $0.059$ sits above that, and a positive $\beta_{L\sigma}$ is mechanically forced by the floor at zero. Against the multiplicative benchmark, observed $0.059$ remains below the predicted $0.124$, which is the substantive claim. The regression measures additive deviations, not multiplicative ones, so it cannot adjudicate the multiplicative comparison directly.
-
-The joint Wald test on all four interactions ($\chi^2(4) = 21{,}023$, $p<10^{-15}$) decisively rejects the additive null. The frictions interact, and the patterns identified in the cell-mean analysis are not sampling artefacts. As a separate robustness check, Table~\ref{tab:factorial-acrossN} shows that changing the replication count from 250 to 1000 sessions shifts each cell mean by less than $0.025$ in $\Delta$; a visual version of this check is reported in Appendix~\ref{app:replication-stability}.
+The latency $\times$ noise coefficient is positive in the additive decomposition, but this does not overturn the super-multiplicative result for \texttt{F110}. It reflects the fact that the additive prediction is floored at zero, while the substantive comparison in Section~\ref{sec:factorial-headline} is against the multiplicative benchmark. A joint Wald test on the four interaction terms rejects the additive null ($\chi^2(4)=21{,}023$, $p<10^{-15}$), confirming that the frictions interact rather than simply adding up independently.
 
 \subsection{Generalisation across the parameter space}
 \label{sec:factorial-heatmaps}
 
 The combined-friction table tests one specific $(L, \sigma, T)$ point. To check whether the patterns generalise, I re-run the unified learner on a $5\times 5$ grid of parameter values for each of the three pairs (Latency $\times$ Noise, Latency $\times$ Async, Noise $\times$ Async), with the third friction held at zero. The axis values ($L \in \{0,1,2,3,5\}$, $\sigma \in \{0, 0.5, 1, 2, 3\}$, $T \in \{0,1,2,5,10\}$) include the combined-friction table's corner values. This gives a direct consistency check: for example, the $(L=2, \sigma=1)$ cell of the Latency$\times$Noise heatmap should match \texttt{F110}. The heatmap cells use $N=250$ sessions rather than $N=1000$ because the purpose is to show qualitative gradients over 75 pairwise cells, not to estimate every cell to four decimal places. The replication-count check in Table~\ref{tab:factorial-acrossN} indicates that these point estimates should be read with roughly $0.025$ precision in $\Delta$.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig_heatmaps.pdf}
 \caption{Pairwise heatmaps at 250 sessions per cell. Left column: observed $\Delta$. Right column: observed $\Delta$ minus the multiplicative-benchmark prediction (red = below prediction, blue = above). Rows are the three friction pairs, with the third friction held at zero. The single-friction sweeps from Section~\ref{sec:results-singles} sit on the zero rows and columns and reproduce the same numbers.}
@@ -165,14 +133,14 @@ The interaction analysis tells us what happens at convergence, but not why. Spec
 
 To test this, I extend the unified learner with a playback phase that starts after each session has converged. At playback period $1$, agent~1 is forced to deviate, both agents otherwise play their converged greedy strategies, and the Q-tables are frozen. Two deviation types are tested per session: a "Low" deviation (forcing the lowest grid price, the maximum-aggression undercut) and a Bertrand deviation (forcing the static Bertrand best response against agent~2's true current price, the most tempting one-period deviation). The same noise random-number stream is used for both deviation types, so the deviation type is the only difference between them. The playback window was initially set to 30 periods based on the recovery timescales reported in \citet{calvano2020}. This was sufficient for seven of the eight combined-friction cells but left \texttt{F111} ambiguous because $\Delta$ dropped sharply and did not visibly recover inside the window. The window was therefore extended to 100 periods for all eight combined-friction cells, keeping the panels comparable, and the genuine-versus-spurious diagnostic is taken from the 100-period results. The pairwise heatmap cells retain the original 30-period window because their retaliation dynamics are not at the diagnostic margin. Figure~\ref{fig:offpath-factorial} plots the $\Delta$ trajectories; statements about agent~2's price response are computed from the same playback files as average changes in agent~2's price-grid index.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig_offpath_factorial.pdf}
 \caption{Off-path deviation test on the eight combined-friction cells. Each panel shows the mean $\Delta$ across sessions over 100 periods after a forced agent-1 deviation, separately for the Low (blue) and BR (orange) deviation types. The dashed grey line is the pre-shock steady state $\Delta$. A drop-and-recover pattern indicates genuine reward-punishment behaviour, while an immediate snap-back would indicate a spurious focal-point equilibrium. The window was extended from an initial 30 periods to 100 after the first pass left \texttt{F111} ambiguous.}
 \label{fig:offpath-factorial}
 \end{figure}
 
-The combined-friction panels (Figure~\ref{fig:offpath-factorial}) show a clear gradient of retaliation strength.
+\noindent The combined-friction panels (Figure~\ref{fig:offpath-factorial}) show a clear gradient of retaliation strength.
 
 \paragraph{Baseline (\texttt{F000}).} Both deviation types trigger a deep $\Delta$ drop (to near Nash for the Low deviation, to $\approx 0.23$ for BR), followed by recovery within roughly seven periods to the pre-shock $\Delta\approx 0.82$. Agent 2's price falls by approximately six grid steps during the punishment phase. This is the reward punishment pattern of \citet{calvano2020}, recovered here as a control.
 
@@ -180,13 +148,15 @@ The combined-friction panels (Figure~\ref{fig:offpath-factorial}) show a clear g
 
 \paragraph{Async-rescue cells (\texttt{F101}, \texttt{F011}, \texttt{F111}).} These are the direct tests of the mechanism proposed in Section~\ref{sec:factorial-headline}. \texttt{F101} shows clear retaliation, as $\Delta$ drops to roughly Nash after both deviation types, with recovery in 9--15 periods. Agent~2's price drops by about 2 grid steps on average. This indicates that the high $\Delta$ in \texttt{F101} is supported by learned punishment behaviour rather than by a passive focal point. \texttt{F011} shows a similar but smaller response, with recovery in 5--6 periods. \texttt{F111} is the slowest case. The initial 30-period playback made the $\Delta$ dynamics ambiguous because the post-deviation drop had not yet recovered within the observed window. Extending the playback to 100 periods resolves the picture: $\Delta$ does recover, but much more slowly than in the lower-friction cells. After the Low deviation it climbs steadily from the post-shock minimum of $0.06$ back through $0.50$ around period 30 and reaches the recovery threshold (within $0.05$ of the pre-shock $0.58$) at period 74. The BR deviation recovers slightly faster, at period 59. The agents therefore re-establish the converged greedy joint action, but the combined noisy and lagged observation makes coordination roughly an order of magnitude slower than in cells with fewer information frictions. The rescue mechanism in \texttt{F111} is genuine in the same sense as in \texttt{F101}, but it operates on a much longer dynamic timescale.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.99\linewidth]{figures/fig_offpath_retal_heatmaps.pdf}
 \caption{Retaliation depth across the three pairwise heatmaps. Depth is the pre-shock $\Delta$ minus the minimum $\Delta$ over the 30 post-shock periods, separately for the Low and BR deviation types. Low forces the lowest grid price; BR forces the static Bertrand best response. Darker cells indicate stronger retaliation and therefore stronger evidence of genuine punishment.}
 \label{fig:offpath-retal-heatmaps}
 \end{figure}
 
-The retaliation depth heatmaps (Figure~\ref{fig:offpath-retal-heatmaps}) extend the genuine versus spurious diagnostic across the parameter space. Retaliation is deepest in the low-friction regions (closer to the baseline corner) and shallowest in the high-friction interior, with the BR deviation generally producing milder dips than the Low deviation. The L$\times$T panel in particular shows that the rescue cells along the $T\geq 1$ rows retain non-trivial retaliation depth, supporting the genuine-collusion reading of the rescue mechanism throughout the heatmap interior, not just at the factorial corner.
+The retaliation depth heatmaps (Figure~\ref{fig:offpath-retal-heatmaps}) extend the genuine versus spurious diagnostic across the parameter space. Retaliation is deepest in the low-friction regions (closer to the baseline corner) and shallowest in the high-friction interior, with the BR deviation generally producing milder dips than the Low deviation. The L$\times$T panel in particular shows that the rescue cells along the $T\geq 1$ rows retain non-trivial retaliation depth, supporting the genuine-collusion reading of the rescue mechanism throughout the heatmap interior, not just at the combined-friction corner.
 
 The off-path tests support the genuine collusion reading of the async rescue across all rescue cells. In \texttt{F101} and \texttt{F011} retaliation is sharp and recovery completes within 5--15 periods. In \texttt{F111} the same dynamics happen on a much longer timescale (recovery only at periods 59--74), but the agents do eventually recoordinate on the converged greedy joint action. None of the rescue cells shows the focal point signature of a spurious equilibrium (an immediate snap-back to pre-shock $\Delta$ with no retaliation). The mechanism story from Section~\ref{sec:factorial-headline}, that asynchrony's structural commitment substitutes for the missing rival-side information holds up across the full range of friction combinations tested.
+
+\clearpage
