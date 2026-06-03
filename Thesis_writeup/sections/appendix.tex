@@ -44,6 +44,44 @@ Figure~\ref{fig:factorial-acrossN} plots the combined-friction cell means at $N\
 \label{fig:factorial-acrossN}
 \end{figure}
 
+\section{Effect decomposition for combined-friction cells}
+\label{app:effect-decomposition}
+
+The decomposition in Section~\ref{sec:factorial-regression} expresses the eight $N=1000$ cell means in Table~\ref{tab:factorial} as a baseline, three main effects, and four interaction effects. Because there are 8 cells and 8 terms, the design is saturated: the coefficients are an exact re-expression of the cell means, not a prediction model fitted with residual error. The benefit is interpretive. Main effects reproduce the single-friction reductions, while interaction effects measure how far the multi-friction cells depart from a purely additive combination of those reductions.
+
+The decomposition is
+\begin{equation*}
+\bar{\Delta}_c \;=\; \beta_0 + \beta_L L_c + \beta_\sigma \sigma_c + \beta_T T_c + \beta_{L\sigma}(L_c\sigma_c) + \beta_{LT}(L_cT_c) + \beta_{\sigma T}(\sigma_cT_c) + \beta_{L\sigma T}(L_c\sigma_cT_c),
+\end{equation*}
+where $c$ indexes the eight cells and $L_c,\sigma_c,T_c\in\{0,1\}$ indicate whether each friction is active. There is no $\varepsilon$ term because the equation can be solved exactly as $\hat\beta = X^{-1}\bar{\boldsymbol\Delta}$. Standard errors are still meaningful because each cell mean has sampling uncertainty from 1000 independent sessions. I compute each cell's $\mathrm{SEM}_c^2 = \mathrm{SD}_c^2 / N$ and propagate that uncertainty through the linear transformation using $\widehat{\mathrm{Var}}(\hat\beta) = X^{-1}\,\mathrm{diag}(\mathrm{SEM}_c^2)\,X^{-\top}$.\footnote{Implemented in \texttt{numpy} and \texttt{scipy.stats}. The resulting standard errors reflect uncertainty in the estimated cell means, not residual variation from an unsaturated regression.}
+
+\begin{table}[H]
+\centering
+\caption{Saturated $2\times 2\times 2$ effect decomposition at $N=1000$ sessions per cell. Standard errors are derived analytically from cross-session SDs. Significance: $^{***}\,p<0.001$.}
+\label{tab:factorial-regression}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{lcccc}
+\toprule
+Term & Estimate & SE & $z$ & $p$ \\
+\midrule
+Intercept                & $+0.848$\textsuperscript{***} & $0.003$ & $+246.0$ & $<\!0.001$ \\
+$L$                      & $-0.638$\textsuperscript{***} & $0.005$ & $-123.3$ & $<\!0.001$ \\
+$\sigma$                 & $-0.348$\textsuperscript{***} & $0.010$ & $-34.7$  & $<\!0.001$ \\
+$T$                      & $-0.465$\textsuperscript{***} & $0.005$ & $-94.5$  & $<\!0.001$ \\
+$L\cdot\sigma$           & $+0.197$\textsuperscript{***} & $0.011$ & $+17.8$  & $<\!0.001$ \\
+$L\cdot T$               & $+0.601$\textsuperscript{***} & $0.008$ & $+72.2$  & $<\!0.001$ \\
+$\sigma\cdot T$          & $+0.245$\textsuperscript{***} & $0.011$ & $+22.0$  & $<\!0.001$ \\
+$L\cdot\sigma\cdot T$    & $+0.097$\textsuperscript{***} & $0.014$ & $+7.0$   & $<\!0.001$ \\
+\midrule
+\multicolumn{5}{l}{Joint Wald test, all four interaction terms equal zero, $\chi^2(4) = 21\,023$, $p<10^{-15}$.} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The intercept recovers $\Delta_0 = 0.848$ and the three main effects reproduce the single-friction reductions ($-0.638$ for latency, $-0.348$ for noise, $-0.465$ for async). These are mechanical restatements of the cell means. The interactions carry the substantive content. The latency-times-async coefficient $\beta_{LT} = +0.601$ is by far the largest. It says that when asynchrony is added to latency, $\Delta$ is $0.601$ higher than a purely additive calculation would imply. The noise-times-async coefficient $\beta_{\sigma T} = +0.245$ gives the analogous result for noise plus asynchrony, smaller in magnitude because noise is a less destructive single-friction treatment than latency. The three-way coefficient $\beta_{L\sigma T} = +0.097$ indicates that, with all three frictions active, the positive asynchrony interaction is mildly stronger than the two-way terms alone would imply.
+
+The latency-times-noise coefficient $\beta_{L\sigma} = +0.197$ might look at first like it contradicts the super-multiplicative finding for \texttt{F110}, but it does not. The additive prediction for \texttt{F110} without the zero floor is $-0.138$, the observed $0.059$ sits above that, and a positive $\beta_{L\sigma}$ is mechanically forced by the floor at zero. Against the multiplicative benchmark, observed $0.059$ remains below the predicted $0.124$, which is the substantive claim. The decomposition measures additive deviations, not multiplicative ones, so it cannot adjudicate the multiplicative comparison directly.
+
 \section{Why bounded memory was not extended}
 \label{app:bounded-memory}
 
