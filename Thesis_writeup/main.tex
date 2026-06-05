@@ -13,12 +13,13 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{microtype}
-\usepackage[round, authoryear]{natbib}
+\usepackage[natbibapa]{apacite}
+\usepackage{xurl}
 \usepackage{hyperref}
-\usepackage{url}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{fontawesome5}
+\urlstyle{same}
 
 % Repository link, surfaced near the title for one-click access.
 \newcommand{\repolink}{\href{https://github.com/lukaschudy/bsc-thesis}{\faGithub\ \textsf{Code on GitHub}}}
@@ -43,12 +44,18 @@
 
 % ---------- Title ----------
 \title{
-    \vspace{-1.5cm}
+    \vspace{-1.8cm}
+    \includegraphics[width=0.38\textwidth]{assets/rug_logo.pdf} \\
+    \vspace{1.0cm}
     \textbf{Robustness of Algorithmic Collusion to Information and Timing Frictions in Q-Learning Pricing} \\
     \vspace{0.3cm}
     \normalsize{\repolink}
 }
-\author{Luk\'a\v{s} Chud\'y}
+\author{
+    Luk\'a\v{s} Chud\'y \\
+    \normalsize BSc E\&BE Economics, University of Groningen \\
+    \normalsize Supervisor: Dr. Dani\"el Vullings
+}
 \date{\today}
 
 \begin{document}
@@ -58,6 +65,11 @@
 \noindent
 \input{sections/abstract}
 \end{abstract}
+\noindent\textbf{Keywords:} Algorithmic collusion; Q-learning; pricing algorithms; information frictions; asynchronous pricing; competition policy.
+
+\noindent\textbf{JEL codes:} C63; C73; D43; L13; L41.
+
+\clearpage
 
 \input{sections/introduction}
 \input{sections/literature}
@@ -67,10 +79,14 @@
 \input{sections/discussion}
 \input{sections/limitations}
 
-\bibliographystyle{abbrvnat}
+\bibliographystyle{apacite}
 \bibliography{references}
 
+\clearpage
 \appendix
 \input{sections/appendix}
+
+\clearpage
+\input{sections/ai_disclosure}
 
 \end{document}
