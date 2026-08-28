@@ -2,7 +2,13 @@
 
 This repository contains the code, simulation outputs, figures, and LaTeX source for my bachelor's thesis on algorithmic collusion in Q-learning pricing games.
 
+**[Read the final thesis (PDF)](Thesis_writeup/main.pdf)**
+
 The project starts from the pricing environment of Calvano et al. (2020): two independent tabular Q-learning agents repeatedly choose prices in a differentiated-products Bertrand game. The thesis asks whether more realistic information and timing frictions make algorithmic collusion less concerning, or whether those frictions can interact in ways that preserve collusion.
+
+![Comparison of observation latency, noisy monitoring, and asynchronous price setting](Thesis_writeup/figures/fig_three_friction_comparison.png)
+
+*The three frictions reduce learned collusion in different ways; their interactions are not captured by studying each friction separately.*
 
 The three frictions studied are:
 
